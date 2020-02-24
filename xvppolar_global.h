@@ -1,0 +1,12 @@
+#ifndef XVPPOLAR_GLOBAL_H
+#define XVPPOLAR_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(XVPPOLAR_LIBRARY)
+#  define XVPPOLARSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define XVPPOLARSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // XVPPOLAR_GLOBAL_H
