@@ -1,11 +1,13 @@
 #include "polarplugin.h"
 #include "polartohsvchnbl.h"
+#include "degreeofpolarizationchnbl.h"
 #include <xiCoreVersion.h>
 #include <xiRtti.h>
 
 bool CxPolarPlugin::init()
 {
     xiRTTI_REGISTER(this, CxPolarToHSVChnbl, "CxChainable");
+    xiRTTI_REGISTER(this, CxDegreeOfPolarizationChnbl, "CxChainable")
 
     return true;
 }
