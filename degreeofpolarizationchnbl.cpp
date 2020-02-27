@@ -7,23 +7,9 @@
 #include <math.h>
 
 // Flags: Own memory pool need because of different format of output images
-CxDegreeOfPolarizationChnbl::CxDegreeOfPolarizationChnbl():CxImageProvider(ExChainableFlags(CxChainable::eHasOwnMemoryPool | CxChainable::eCanChangeEnableState))
+CxDegreeOfPolarizationChnbl::CxDegreeOfPolarizationChnbl(): CxAbstractPolarChnbl("Degree of Polarization")
 {
 
-}
-
-QString CxDegreeOfPolarizationChnbl::title() const
-{
-  return tr("Polarization: Degree of linear polarization");
-}
-
-bool CxDegreeOfPolarizationChnbl::acceptsDataFrom(CxChainable *pPrecedessor) {
-    //The object accepts images (coming from CxImageProvider).
-    return qobject_cast<CxImageProvider*>(pPrecedessor) != NULL;
-}
-
-int CxDegreeOfPolarizationChnbl::buffersCountInMemoryPool() const{
-  return 1;
 }
 
 CxChainable* CxDegreeOfPolarizationChnbl::clone() {
@@ -31,73 +17,39 @@ CxChainable* CxDegreeOfPolarizationChnbl::clone() {
   return new CxDegreeOfPolarizationChnbl();
 }
 
-IxChainData* CxDegreeOfPolarizationChnbl::processData(IxChainData *pReceivedData){
-  // Received data should be an image
-  CxImageData* inputImage = qobject_cast<CxImageData*>(pReceivedData);
-  // If there was no or invalid input, there shall be no output
-  if(inputImage == NULL){
-    setErrorMessage("Invalid input image!");
-    return NULL;
-  }
-  // Get buffer form input image
-  SxPicBuf &inputBuffer = inputImage->picBuf();
-  CxImageMetadata inputMetadata = inputImage->imageMetadata();
-  // New buffer for the output image
-  SxPicBuf outputBuffer;
-  CxImageMetadata outputMetadata;
 
-  // Calculate output image format and metadata
-  if(!queryOutputImageInfo(inputBuffer, outputBuffer, &inputMetadata, &outputMetadata)){
-    setErrorMessage("Could not query output image info");
-    return NULL;
-  }
-
-  // Allocate buffer for output image from memory pool
-  if(!CxPicBufAPI::AllocPicBufFromPool(m_hMemoryPool, this, outputBuffer, outputBuffer)){
-    setErrorMessage("Could not allocate buffer!");
-    return NULL;
-  }
-
-  switch(inputBuffer.m_eDataType){
+bool CxDegreeOfPolarizationChnbl::processBuffers(const SxPicBuf &input, SxPicBuf &output){
+  switch(input.m_eDataType){
     case extypeUInt8:
-      convertToDOP<unsigned char, 8>(inputBuffer, outputBuffer);
+      convertToDOP<unsigned char, 8>(input, output);
       break;
     case extypeUInt16:
-      switch(inputBuffer.m_uiBpc){ // Not passing bpc directly to allow for compile time optimizations
+      switch(input.m_uiBpc){ // Not passing bpc directly to allow for compile time optimizations
         case 8:
-          convertToDOP<unsigned short, 8>(inputBuffer, outputBuffer);
+          convertToDOP<unsigned short, 8>(input, output);
           break;
         case 10:
-          convertToDOP<unsigned short, 10>(inputBuffer, outputBuffer);
+          convertToDOP<unsigned short, 10>(input, output);
           break;
         case 12:
-          convertToDOP<unsigned short, 12>(inputBuffer, outputBuffer);
+          convertToDOP<unsigned short, 12>(input, output);
           break;
         case 14:
-          convertToDOP<unsigned short, 14>(inputBuffer, outputBuffer);
+          convertToDOP<unsigned short, 14>(input, output);
           break;
         case 16:
-          convertToDOP<unsigned short, 16>(inputBuffer, outputBuffer);
+          convertToDOP<unsigned short, 16>(input, output);
           break;
         default:
           setErrorMessage("Unsupported input bit depth!");
-          return NULL;
+          return false;
       }
       break;
     default:
       setErrorMessage("Unsupported input image bit depth!");
-      return NULL;
+      return false;
   }
-
-  CxImageData* result = new CxImageData();
-  result->setPicBuf(outputBuffer);
-  result->setImageMetadata(outputMetadata);
-
-  //If we have made it this far, we can delete the input image;
-  delete pReceivedData;
-
-  return result;
-
+  return true;
 }
 
 

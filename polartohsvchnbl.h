@@ -1,7 +1,7 @@
 #ifndef POLARTOHSVCHNBL_H
 #define POLARTOHSVCHNBL_H
 
-#include<Chainable.h>
+#include "abstractpolarchnbl.h"
 
 struct PolarPixel{
   float angle_deg;
@@ -17,22 +17,17 @@ struct PolarPixelRGB32{
   unsigned char alpha = 0; // Not in use
 };
 
-class CxPolarToHSVChnbl: public CxImageProvider
+class CxPolarToHSVChnbl: public CxAbstractPolarChnbl
 {
     Q_OBJECT
     Q_CLASSINFO("CustomName", "Polar To HSV")
 public:
     Q_INVOKABLE CxPolarToHSVChnbl();
-
-    // CxChainable interface
-public:
-    virtual QString title() const;
-    virtual bool acceptsDataFrom(CxChainable *pPrecedessor);
-    virtual int buffersCountInMemoryPool() const;
-    virtual CxChainable *clone();
+    CxChainable *clone();
+    bool queryOutputImageInfo(const SxPicBufInfo &picInfoInput, SxPicBufInfo &picInfoOutput, const CxImageMetadata *pMetadataInput, CxImageMetadata *pMetadataOutput);
 
 protected:
-    virtual IxChainData *processData(IxChainData *pReceivedData);
+    bool processBuffers(const SxPicBuf &input, SxPicBuf &output);
 
 private:
     template <typename T, int bpc>
@@ -41,9 +36,6 @@ private:
     template<typename T, int vecWidth, int bpc>
     inline size_t calculatePolarization(const T* upper, const T*lower, PolarPixelRGB32* dst);
 
-    // CxImageProvider interface
-public:
-    virtual bool queryOutputImageInfo(const SxPicBufInfo &picInfoInput, SxPicBufInfo &picInfoOutput, const CxImageMetadata *pMetadataInput, CxImageMetadata *pMetadataOutput);
 };
 
 

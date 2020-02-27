@@ -1,23 +1,20 @@
 #ifndef CXDEGREEOFPOLARIZATIONCHNBL_H
 #define CXDEGREEOFPOLARIZATIONCHNBL_H
 
-#include<Chainable.h>
+#include "abstractpolarchnbl.h"
 
-class CxDegreeOfPolarizationChnbl : public CxImageProvider
+class CxDegreeOfPolarizationChnbl : public CxAbstractPolarChnbl
 {
   Q_OBJECT
   Q_CLASSINFO("CustomName", "Polarization: Degree of polarization")
 public:
   Q_INVOKABLE CxDegreeOfPolarizationChnbl();
 
-  virtual QString title() const;
-  virtual bool acceptsDataFrom(CxChainable *pPrecedessor);
-  virtual int buffersCountInMemoryPool() const;
-  virtual CxChainable *clone();
-  virtual bool queryOutputImageInfo(const SxPicBufInfo &picInfoInput, SxPicBufInfo &picInfoOutput, const CxImageMetadata *pMetadataInput, CxImageMetadata *pMetadataOutput);
+  CxChainable *clone();
+  bool queryOutputImageInfo(const SxPicBufInfo &picInfoInput, SxPicBufInfo &picInfoOutput, const CxImageMetadata *pMetadataInput, CxImageMetadata *pMetadataOutput);
 
 protected:
-  virtual IxChainData *processData(IxChainData *pReceivedData);
+  bool processBuffers(const SxPicBuf &input, SxPicBuf &output);
 
 private:
   template <typename T, int bpc>

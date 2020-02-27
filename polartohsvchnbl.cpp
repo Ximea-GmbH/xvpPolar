@@ -7,23 +7,9 @@
 #include <math.h>
 
 // Flags: Own memory pool is needed because of different format of output images
-Q_INVOKABLE CxPolarToHSVChnbl::CxPolarToHSVChnbl():CxImageProvider(ExChainableFlags(CxChainable::eHasOwnMemoryPool | CxChainable::eCanChangeEnableState))
+Q_INVOKABLE CxPolarToHSVChnbl::CxPolarToHSVChnbl(): CxAbstractPolarChnbl("Polar to HSV")
 {
 
-}
-
-QString CxPolarToHSVChnbl::title() const {
-    return tr("Polarization: Map to HSV");
-}
-
-bool CxPolarToHSVChnbl::acceptsDataFrom(CxChainable *pPrecedessor) {
-    //The object accepts images (coming from CxImageProvider).
-    return qobject_cast<CxImageProvider*>(pPrecedessor) != NULL;
-}
-
-int CxPolarToHSVChnbl::buffersCountInMemoryPool() const {
-    // The buffer for the output image is allocated from Memory Pool
-    return 1;
 }
 
 CxChainable* CxPolarToHSVChnbl::clone() {
@@ -31,75 +17,39 @@ CxChainable* CxPolarToHSVChnbl::clone() {
     return new CxPolarToHSVChnbl();
 }
 
-IxChainData* CxPolarToHSVChnbl::processData(IxChainData *pReceivedData) {
-    // Received data should be an image
-    CxImageData* inputImage = qobject_cast<CxImageData*>(pReceivedData);
-    // If there was no  or invalid input, there shall be no output
-    if(inputImage == NULL){
-        setErrorMessage("Invalid input image!");
-        return NULL;
-    }
-    // Get buffer from input image
-    SxPicBuf &inputBuffer = inputImage->picBuf();
-    CxImageMetadata inputMetadata = inputImage->imageMetadata();
-    // New buffer for output image
-    SxPicBuf outputBuffer;
-    CxImageMetadata outputMetadata;
-
-    // Calculate output image format and metadata
-    if(!queryOutputImageInfo(inputBuffer, outputBuffer, &inputMetadata, &outputMetadata)){
-        setErrorMessage("Could not query output image info");
-        return NULL;
-    }
-
-    // Allocate buffer for output image from memory pool
-    if(!CxPicBufAPI::AllocPicBufFromPool(m_hMemoryPool, this, outputBuffer, outputBuffer)){
-        setErrorMessage("Could not allocate buffer!");
-        return NULL;
-    }
-
+bool CxPolarToHSVChnbl::processBuffers(const SxPicBuf &input, SxPicBuf &output){
     // Main conversion algorithm populates outputBuffer based on inputBuffer
-    switch(inputBuffer.m_eDataType){
+    switch(input.m_eDataType){
       case extypeUInt8:
-        convertPolarToHSV<unsigned char,8>(inputBuffer, outputBuffer);
+        convertPolarToHSV<unsigned char,8>(input, output);
         break;
       case extypeUInt16:
-        switch(inputBuffer.m_uiBpc){ // Not passing bpc directly to allow for compile time optimizations
+        switch(input.m_uiBpc){ // Not passing bpc directly to allow for compile time optimizations
           case 8:
-            convertPolarToHSV<unsigned short,8>(inputBuffer, outputBuffer);
+            convertPolarToHSV<unsigned short,8>(input, output);
             break;
           case 10:
-            convertPolarToHSV<unsigned short, 10>(inputBuffer, outputBuffer);
+            convertPolarToHSV<unsigned short, 10>(input, output);
             break;
           case 12:
-            convertPolarToHSV<unsigned short, 12>(inputBuffer, outputBuffer);
+            convertPolarToHSV<unsigned short, 12>(input, output);
             break;
           case 14:
-            convertPolarToHSV<unsigned short, 14>(inputBuffer, outputBuffer);
+            convertPolarToHSV<unsigned short, 14>(input, output);
             break;
           case 16:
-            convertPolarToHSV<unsigned short, 16>(inputBuffer, outputBuffer);
+            convertPolarToHSV<unsigned short, 16>(input, output);
             break;
           default:
             setErrorMessage("Unsupported input bit depth!");
-            return NULL;
+            return false;
         }
         break;
       default:
         setErrorMessage("Unsupported input bit depth!");
-        return NULL;
+        return false;
     }
-
-
-    //Create output image
-    CxImageData* result = new CxImageData();
-    result->setPicBuf(outputBuffer);
-    result->setImageMetadata(outputMetadata);
-
-    // If we have made it this far, we can now delete the input image
-    delete pReceivedData;
-
-    return result;
+    return true;
 }
 
 template <typename T, int bpc>

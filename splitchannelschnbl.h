@@ -1,22 +1,19 @@
 #ifndef CXSPLITCHANNELSCHNBL_H
 #define CXSPLITCHANNELSCHNBL_H
 
-#include<Chainable.h>
+#include "abstractpolarchnbl.h"
 
-class CxSplitChannelsChnbl : public CxImageProvider
+class CxSplitChannelsChnbl : public CxAbstractPolarChnbl
 {
   Q_OBJECT
   Q_CLASSINFO("CustomName", "Polarization: Split Channels")
 public:
   Q_INVOKABLE CxSplitChannelsChnbl();
-  virtual QString title() const;
-  virtual bool acceptsDataFrom(CxChainable *pPrecedessor);
-  virtual int buffersCountInMemoryPool() const;
-  virtual CxChainable *clone();
-  virtual bool queryOutputImageInfo(const SxPicBufInfo &picInfoInput, SxPicBufInfo &picInfoOutput, const CxImageMetadata *pMetadataInput, CxImageMetadata *pMetadataOutput);
+  CxChainable *clone();
+  bool queryOutputImageInfo(const SxPicBufInfo &picInfoInput, SxPicBufInfo &picInfoOutput, const CxImageMetadata *pMetadataInput, CxImageMetadata *pMetadataOutput);
 
 protected:
-  virtual IxChainData *processData(IxChainData *pReceivedData);
+  bool processBuffers(const SxPicBuf &input, SxPicBuf &output);
 
 private:
   template<typename T>

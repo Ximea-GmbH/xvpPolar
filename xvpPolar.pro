@@ -13,12 +13,14 @@ CONFIG += plugin c++17
 SOURCES += polarplugin.cpp \
      polartohsvchnbl.cpp \
     degreeofpolarizationchnbl.cpp \
-    splitchannelschnbl.cpp
+    splitchannelschnbl.cpp \
+    abstractpolarchnbl.cpp
 
 HEADERS += polarplugin.h \
      polartohsvchnbl.h \
     degreeofpolarizationchnbl.h \
-    splitchannelschnbl.h
+    splitchannelschnbl.h \
+    abstractpolarchnbl.h
 
 INCLUDEPATH += $$PWD/include/xiCore $$PWD/include/xiCoreGui
 
