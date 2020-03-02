@@ -14,13 +14,15 @@ SOURCES += polarplugin.cpp \
      polartohsvchnbl.cpp \
     degreeofpolarizationchnbl.cpp \
     splitchannelschnbl.cpp \
-    abstractpolarchnbl.cpp
+    abstractpolarchnbl.cpp \
+    cxremovereflectionschnbl.cpp
 
 HEADERS += polarplugin.h \
      polartohsvchnbl.h \
     degreeofpolarizationchnbl.h \
     splitchannelschnbl.h \
-    abstractpolarchnbl.h
+    abstractpolarchnbl.h \
+    cxremovereflectionschnbl.h
 
 INCLUDEPATH += $$PWD/include/xiCore $$PWD/include/xiCoreGui
 

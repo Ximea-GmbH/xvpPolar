@@ -38,9 +38,16 @@ bool CxSplitChannelsChnbl::queryOutputImageInfo(const SxPicBufInfo &picInfoInput
    // Initialize output with input
    picInfoOutput = picInfoInput;
 
+   //HACK: There is no info about the cfa in the image data from polarized cameras, so we use the modelId to deduce it here
+   if(pMetadataInput->m_iCameraModelId == 182){
+     picInfoOutput.m_eColorFilterArray = excfaBG;
+   }
+
    if (pMetadataOutput != NULL && pMetadataInput != NULL){
        *pMetadataOutput = *pMetadataInput;
+        pMetadataOutput->updateFromPicBufInfo(&picInfoOutput);
    }
+
    return true;
 }
 

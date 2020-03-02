@@ -84,7 +84,7 @@ bool CxDegreeOfPolarizationChnbl::convertToDOP(const SxPicBuf& input, SxPicBuf& 
     T* dst = ROW(T, output, row/2);
     size_t column = 0;
     constexpr size_t stepsize = 4;
-    while (column < input.m_uiWidth){
+    while (column+2*stepsize <= input.m_uiWidth){
       size_t step = calculateDOP<T, stepsize, bpc>(upper, lower, dst);
       upper += 2*step;
       lower += 2*step;
