@@ -77,7 +77,7 @@ template<typename T, int bpc>
 bool CxDegreeOfPolarizationChnbl::convertToDOP(const SxPicBuf& input, SxPicBuf& output){
 #pragma omp parallel for
   // Loop over input image two rows at a time
-  for(unsigned int row = 0; row < input.m_uiHeight; row+=2){
+  for(int row = 0; row < input.m_uiHeight; row+=2){
     // Pointers because performance
     const T* upper = ROW(T, input, row);
     const T* lower = ROW(T, input, row+1);

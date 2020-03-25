@@ -18,7 +18,7 @@ bool CxSplitChannelsChnbl::splitChannels(const SxPicBuf& input, SxPicBuf& output
   //Channels are split in two steps: First all even rows, then all odd rows
   for(size_t i = 0; i <= 1; i++){
 #pragma omp parallel for
-    for(unsigned int row = i; row < input.m_uiHeight; row+=2){
+    for(int row = i; row < input.m_uiHeight; row+=2){
       const T* src = ROW(T, input, row);
       T* dst_left = ROW(T, output, row/2 + offset_low * i);
       T* dst_right = dst_left+offset_right;

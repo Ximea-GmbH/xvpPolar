@@ -8,7 +8,7 @@ QT       += widgets xml
 
 TARGET = xvpPolar
 TEMPLATE = lib
-CONFIG += plugin c++17
+CONFIG += plugin C++17
 
 SOURCES += polarplugin.cpp \
      polartohsvchnbl.cpp \
@@ -26,13 +26,14 @@ HEADERS += polarplugin.h \
 
 INCLUDEPATH += $$PWD/include/xiCore $$PWD/include/xiCoreGui
 
-QMAKE_CXXFLAGS += -fopenmp
-
-LIBS += -fopenmp
+windows {
+  LIBS += -LC:\XIMEA\Examples\CamTool\xvpSample\lib\win\x64 -lxiCore -lxiCoreGui -openmp
+  QMAKE_CXXFLAGS += -fp:fast -arch:AVX2 -Ox -openmp -Qvec-report:1
+}
 
 linux {
-  LIBS += -L/opt/XIMEA/CamTool -lxiCore -lxiCoreGui
-  QMAKE_CXXFLAGS += -ffast-math -ftree-vectorize -march=znver1
+  LIBS += -L/opt/XIMEA/CamTool -lxiCore -lxiCoreGui -fopenmp
+  QMAKE_CXXFLAGS += -ffast-math -ftree-vectorize -march=znver1 -fopenmp
 }
 
 

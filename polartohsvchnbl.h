@@ -20,7 +20,7 @@ struct PolarPixelRGB32{
 class CxPolarToHSVChnbl: public CxAbstractPolarChnbl
 {
     Q_OBJECT
-    Q_CLASSINFO("CustomName", "Polar To HSV")
+    Q_CLASSINFO("CustomName", "Polarization: Map to HSV")
 public:
     Q_INVOKABLE CxPolarToHSVChnbl();
     CxChainable *clone();
