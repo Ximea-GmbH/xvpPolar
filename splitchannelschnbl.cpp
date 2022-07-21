@@ -13,16 +13,16 @@ CxChainable* CxSplitChannelsChnbl::clone() {
 template<typename T>
 bool CxSplitChannelsChnbl::splitChannels(const SxPicBuf& input, SxPicBuf& output)
 {
-  const size_t offset_right = output.m_uiWidth/2;
-  const size_t offset_low = output.m_uiHeight/2;
+  const std::size_t offset_right = output.m_uiWidth/2;
+  const std::size_t offset_low = output.m_uiHeight/2;
   //Channels are split in two steps: First all even rows, then all odd rows
-  for(size_t i = 0; i <= 1; i++){
+  for(std::size_t i = 0; i <= 1; i++){
 #pragma omp parallel for
-    for(int row = i; row < input.m_uiHeight; row+=2){
+    for(quint32 row = i; row < input.m_uiHeight; row+=2u){
       const T* src = ROW(T, input, row);
       T* dst_left = ROW(T, output, row/2 + offset_low * i);
       T* dst_right = dst_left+offset_right;
-      for(size_t column = 0; column < input.m_uiWidth; column += 2){
+      for(std::size_t column = 0; column < input.m_uiWidth; column += 2){
         *(dst_left++) = *(src++);
         *(dst_right++) = *(src++);
       }
@@ -43,7 +43,7 @@ bool CxSplitChannelsChnbl::queryOutputImageInfo(const SxPicBufInfo &picInfoInput
      picInfoOutput.m_eColorFilterArray = excfaBG;
    }
 
-   if (pMetadataOutput != NULL && pMetadataInput != NULL){
+   if (pMetadataOutput != nullptr && pMetadataInput != nullptr){
        *pMetadataOutput = *pMetadataInput;
         pMetadataOutput->updateFromPicBufInfo(&picInfoOutput);
    }

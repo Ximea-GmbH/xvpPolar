@@ -5,6 +5,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <math.h>
+#include <cstddef>
 
 // Flags: Own memory pool need because of different format of output images
 CxDegreeOfPolarizationChnbl::CxDegreeOfPolarizationChnbl(): CxAbstractPolarChnbl("Degree of Polarization")
@@ -64,7 +65,7 @@ bool CxDegreeOfPolarizationChnbl::queryOutputImageInfo(const SxPicBufInfo& picIn
    // Recalculate stride
    picInfoOutput.m_uiStride = XICORE_ALIGN_IMG_STRIDE(picInfoOutput.m_uiWidth*picInfoOutput.bytesPerPixel());
 
-   if (pMetadataOutput != NULL && pMetadataInput != NULL){
+   if (pMetadataOutput != nullptr && pMetadataInput != nullptr){
        *pMetadataOutput = *pMetadataInput;
    }
 
@@ -77,15 +78,15 @@ template<typename T, int bpc>
 bool CxDegreeOfPolarizationChnbl::convertToDOP(const SxPicBuf& input, SxPicBuf& output){
 #pragma omp parallel for
   // Loop over input image two rows at a time
-  for(int row = 0; row < input.m_uiHeight; row+=2){
+  for(quint32 row = 0u; row < input.m_uiHeight; row+=2u){
     // Pointers because performance
     const T* upper = ROW(T, input, row);
     const T* lower = ROW(T, input, row+1);
     T* dst = ROW(T, output, row/2);
-    size_t column = 0;
-    constexpr size_t stepsize = 4;
+    std::size_t column = 0;
+    constexpr std::size_t stepsize = 4;
     while (column+2*stepsize <= input.m_uiWidth){
-      size_t step = calculateDOP<T, stepsize, bpc>(upper, lower, dst);
+      std::size_t step = calculateDOP<T, stepsize, bpc>(upper, lower, dst);
       upper += 2*step;
       lower += 2*step;
       dst += step;

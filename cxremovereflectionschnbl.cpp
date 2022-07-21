@@ -22,7 +22,7 @@ bool CxRemoveReflectionsChnbl::queryOutputImageInfo(const SxPicBufInfo &picInfoI
 
    picInfoOutput.m_uiStride = XICORE_ALIGN_IMG_STRIDE(picInfoOutput.m_uiWidth*picInfoOutput.bytesPerPixel());
 
-   if (pMetadataOutput != NULL && pMetadataInput != NULL){
+   if (pMetadataOutput != nullptr && pMetadataInput != nullptr){
        *pMetadataOutput = *pMetadataInput;
    }
    return true;
@@ -45,11 +45,11 @@ bool CxRemoveReflectionsChnbl::convertToMinimumImage(const SxPicBuf& input, SxPi
 {
 #pragma omp parallel for
     // Loop over input image two rows at a time
-    for(int row = 0; row < input.m_uiHeight; row+=2){
+    for(quint32 row = 0u; row < input.m_uiHeight; row+=2u){
         const T* upper = ROW(T, input, row);
         const T* lower = ROW(T, input, row+1);
         T* dst = ROW(T, output, row/2);
-        size_t column = 0;
+        std::size_t column = 0;
         while (column < input.m_uiWidth){
           T upper_temp = *upper < *(upper+1) ? *upper : *(upper+1);
           T lower_temp =  *lower < *(lower+1) ? *lower : *(lower+1);

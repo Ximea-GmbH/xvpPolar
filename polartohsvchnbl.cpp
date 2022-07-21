@@ -57,15 +57,15 @@ bool CxPolarToHSVChnbl::convertPolarToHSV(const SxPicBuf &input, SxPicBuf &outpu
 {
 #pragma omp parallel for
     // Loop over input image two rows at a time
-    for(int row = 0; row < input.m_uiHeight; row+=2){
+    for(quint32 row = 0u; row < input.m_uiHeight; row+=2u){
         // Pointers because performance
         const T* upper = ROW(T, input, row);
-        const T* lower = ROW(T, input, row+1);
-        PolarPixelRGB32* dst = ROW(PolarPixelRGB32, output, row/2);
-        size_t column = 0;
-        constexpr size_t stepsize = 4;
+        const T* lower = ROW(T, input, row+1u);
+        PolarPixelRGB32* dst = ROW(PolarPixelRGB32, output, row/2u);
+        std::size_t column = 0;
+        constexpr std::size_t stepsize = 4;
         while (column < input.m_uiWidth){
-          size_t step = calculatePolarization<T, stepsize, bpc>(upper, lower, dst);
+          std::size_t step = calculatePolarization<T, stepsize, bpc>(upper, lower, dst);
           upper += 2*step;
           lower += 2*step;
           dst += step;
@@ -89,7 +89,7 @@ bool CxPolarToHSVChnbl::queryOutputImageInfo(const SxPicBufInfo &picInfoInput, S
    // Recalculate stride
    picInfoOutput.m_uiStride = XICORE_ALIGN_IMG_STRIDE(picInfoOutput.m_uiWidth*picInfoOutput.bytesPerPixel());
 
-   if (pMetadataOutput != NULL && pMetadataInput != NULL){
+   if (pMetadataOutput != nullptr && pMetadataInput != nullptr){
        *pMetadataOutput = *pMetadataInput;
        // RGB images do not have color filter arrays
        pMetadataOutput->m_eColorFilterArray = excfaNone;
@@ -126,7 +126,7 @@ PolarPixelRGB32::PolarPixelRGB32(const float &angle_rad, const float &degree_of_
 }
 
 template<typename T, int vecWidth, int bpc>
-size_t CxPolarToHSVChnbl::calculatePolarization(const T* upper, const T* lower, PolarPixelRGB32* dst)
+std::size_t CxPolarToHSVChnbl::calculatePolarization(const T* upper, const T* lower, PolarPixelRGB32* dst)
 {
   constexpr float kPi = (float)M_PI;
   constexpr float kPi4 = (float)M_PI_4;

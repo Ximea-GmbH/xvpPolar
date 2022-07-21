@@ -34,7 +34,7 @@ private:
     bool convertPolarToHSV(const SxPicBuf& input, SxPicBuf& output);
 
     template<typename T, int vecWidth, int bpc>
-    inline size_t calculatePolarization(const T* upper, const T*lower, PolarPixelRGB32* dst);
+    inline std::size_t calculatePolarization(const T* upper, const T*lower, PolarPixelRGB32* dst);
 
 };
 
